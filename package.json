@@ -1,0 +1,25 @@
+{
+  "name": "smatch",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node src/backend/wsServer.mjs"
+  },
+  "dependencies": {
+    "axios": "^1.7.8",
+    "pinia": "^2.2.8",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.2.4",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.0.1"
+  }
+}
