@@ -10,7 +10,9 @@
     "server": "node src/backend/wsServer.mjs"
   },
   "dependencies": {
+    "@primevue/themes": "^4.2.4",
     "axios": "^1.7.8",
+    "dotenv": "^16.4.7",
     "pinia": "^2.2.8",
     "primeicons": "^7.0.0",
     "primevue": "^4.2.4",
