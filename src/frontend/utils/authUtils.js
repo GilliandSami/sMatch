@@ -2,15 +2,15 @@ import { useFetchApi, setDefaultHeaders } from './FetchAPI';
 
 /**
  * Utilitaire pour gérer l'authentification.
- * Fournit des fonctions pour login, register, et gestion du token.
- * @param {string} baseUrl - L'URL de base pour l'API.
+ * Fournit des fonctions pour login, register, et gestion du token JWT.
+ * @param {string} baseUrl - L'URL de base pour l'API (facultatif, sinon utilise celle par défaut).
  */
 export function useAuth(baseUrl = null) {
     const { fetchApi } = useFetchApi(baseUrl);
 
     /**
-     * Fonction pour définir ou supprimer le token JWT.
-     * @param {string|null} token - Le token JWT à définir. Si null, le token sera supprimé.
+     * Définit ou supprime le token JWT dans les en-têtes HTTP.
+     * @param {string|null} token - Le token JWT à définir. Si null, il sera supprimé.
      */
     function setAuthToken(token) {
         if (token) {
@@ -18,7 +18,7 @@ export function useAuth(baseUrl = null) {
                 Authorization: `Bearer ${token}`,
             });
         } else {
-            // Supprimer le token des en-têtes
+            // Supprime le token des en-têtes HTTP
             setDefaultHeaders({
                 Authorization: '',
             });
@@ -27,64 +27,74 @@ export function useAuth(baseUrl = null) {
 
     /**
      * Fonction pour se connecter.
-     * @param {object} credentials - Les informations de connexion (email, password).
-     * @returns {Promise<object>} - Le token JWT ou une erreur.
+     * @param {object} credentials - Les informations de connexion (email et password).
+     * @returns {Promise<object>} - La réponse de l'API contenant le token JWT ou une erreur.
      */
     async function login(credentials) {
         try {
             const response = await fetchApi({
-                url: '/auth/login',
+                url: '/api/auth/login',
                 method: 'POST',
                 data: credentials,
             });
 
-            // Si la connexion réussit, enregistrer le token
-            setAuthToken(response.token);
-            localStorage.setItem('jwt', response.token);
+            // Vérifie si le token est présent dans la réponse
+            if (response.token) {
+                setAuthToken(response.token); // Définit le token dans les en-têtes HTTP
+                localStorage.setItem('jwt', response.token); // Stocke le token dans le localStorage
+            } else {
+                throw new Error("Le token JWT est manquant dans la réponse.");
+            }
 
-            return response; // Renvoie la réponse complète (y compris le token)
+            return response;
         } catch (error) {
-            throw error; // Gérer les erreurs
+            console.error("Erreur lors de la connexion :", error);
+            throw error; // Relance l'erreur pour une gestion dans le frontend
         }
     }
 
     /**
      * Fonction pour s'inscrire.
-     * @param {object} userData - Les informations nécessaires à l'inscription (username, email, password).
-     * @returns {Promise<object>} - Le token JWT ou une erreur.
+     * @param {object} userData - Les données nécessaires à l'inscription (username, email, password).
+     * @returns {Promise<object>} - La réponse de l'API contenant le token JWT ou une erreur.
      */
     async function register(userData) {
         try {
             const response = await fetchApi({
-                url: '/auth/register',
+                url: '/api/auth/register',
                 method: 'POST',
                 data: userData,
             });
 
-            // Si l'inscription réussit, enregistrer le token
-            setAuthToken(response.token);
-            localStorage.setItem('jwt', response.token);
+            // Vérifie si le token est présent dans la réponse
+            if (response.token) {
+                setAuthToken(response.token); // Définit le token dans les en-têtes HTTP
+                localStorage.setItem('jwt', response.token); // Stocke le token dans le localStorage
+            } else {
+                throw new Error("Le token JWT est manquant dans la réponse.");
+            }
 
-            return response; // Renvoie la réponse complète (y compris le token)
+            return response;
         } catch (error) {
-            throw error; // Gérer les erreurs
+            console.error("Erreur lors de l'inscription :", error);
+            throw error; // Relance l'erreur pour une gestion dans le frontend
         }
     }
 
     /**
      * Fonction pour se déconnecter.
-     * Supprime le token JWT du stockage local et des en-têtes.
+     * Supprime le token JWT du stockage local et des en-têtes HTTP.
      */
     function logout() {
-        setAuthToken(null);
-        localStorage.removeItem('jwt');
-        console.log('Déconnexion réussie');
+        setAuthToken(null); // Supprime le token des en-têtes HTTP
+        localStorage.removeItem('jwt'); // Supprime le token du localStorage
+        console.log('Déconnexion réussie'); // À remplacer par une notification si nécessaire
     }
 
     return {
         login,
         register,
         logout,
-        setAuthToken, // Exposer la fonction pour des cas spécifiques
+        setAuthToken, // Expose cette fonction pour des cas spécifiques
     };
 }

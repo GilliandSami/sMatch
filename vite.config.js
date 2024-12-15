@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite';
-import path from 'path';
 import vue from '@vitejs/plugin-vue';
-
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,9 +11,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: process.env.API_BASE_URL || 'http://localhost:3000',
+        target: 'http://localhost:3000', // Redirige vers le port 3000
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ''), // Supprime le préfixe /api
       },
     },
   },
