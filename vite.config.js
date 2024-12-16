@@ -13,7 +13,6 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000', // Redirige vers le port 3000
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''), // Supprime le préfixe /api
       },
     },
   },
