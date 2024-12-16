@@ -53,19 +53,28 @@ export default {
     <!-- Formulaire -->
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" v-model="form.email" placeholder="Email" required />
+        <!-- <label for="email">Email</label> -->
+        <div class="input-with-icon">
+          <img src="/assets/mail_24dp.svg" alt="Email Icon" class="icon" />
+          <input type="email" id="email" v-model="form.email" placeholder="Email" required />
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" v-model="form.password" placeholder="Mot de passe" required />
+        <!-- <label for="password">Mot de passe</label> -->
+        <div class="input-with-icon">
+          <img src="/assets/lock_24dp.svg" alt="Lock Icon" class="icon" />
+          <input type="password" id="password" v-model="form.password" placeholder="Mot de passe" required />
+        </div>
       </div>
 
       <!-- Champ supplémentaire pour l'enregistrement -->
       <div class="form-group" v-if="!isLogin">
-        <label for="username">Pseudo</label>
-        <input type="text" id="username" v-model="form.username" placeholder="Pseudo" required />
+        <!-- <label for="username">Pseudo</label> -->
+        <div class="input-with-icon">
+          <img src="/assets/cruelty_free_24dp.svg" alt="Pseudo Icon" class="icon" />
+          <input type="text" id="username" v-model="form.username" placeholder="Pseudo" required />
+        </div>
       </div>
 
       <button class="submit-btn">
@@ -75,16 +84,21 @@ export default {
   </div>
 </template>
 
+
 <style scoped>
 .auth-container {
   max-width: 400px;
   margin: 0 auto;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .auth-switch {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .auth-switch button {
@@ -94,33 +108,58 @@ export default {
   background: none;
   cursor: pointer;
   font-weight: bold;
+  color: #FF6C19;
+  font-size: 1rem;
+  border-radius: 50px; /* Boutons totalement arrondis */
 }
 
 .auth-switch button.active {
-  background-color: #f46b45;
+  background-color: #FF6C19;
   color: white;
-  border-radius: 10px;
+  border-radius: 50px; /* Bouton actif arrondi */
 }
 
 .form-group {
   margin-bottom: 1.5rem;
 }
 
-input {
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon .icon {
+  position: absolute;
+  left: 10px;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.input-with-icon input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 0.75rem 0.75rem 0.75rem 3rem;
+  border: 2px solid #FF6C19;
+  border-radius: 50px;
+  font-size: 1rem;
+  outline: none;
 }
 
 .submit-btn {
   width: 100%;
   padding: 0.75rem;
-  background-color: #f46b45;
+  background-color: #FF6C19;
   color: white;
   font-weight: bold;
+  font-size: 1rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 50px; /* Bouton de soumission totalement arrondi */
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #ff8145;
 }
 </style>
