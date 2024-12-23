@@ -1,12 +1,14 @@
 <script>
 import FeedSwitcher from "../components/FeedSwitcher.vue";
 import BottomNavBar from "../components/BottomNavBar.vue";
+import CreatePostForm from "../components/CreatePostForm.vue";
 
 export default {
   name: "HomePage",
   components: {
     FeedSwitcher,
     BottomNavBar,
+    CreatePostForm,
   },
   data() {
     return {
@@ -26,6 +28,8 @@ export default {
   <div class="home-page">
     <!-- Composant de sélection -->
     <FeedSwitcher @feed-selected="onFeedSelected" />
+    <!-- Formulaire de création de post -->
+    <CreatePostForm />
     <!-- Contenu dynamique selon le fil -->
     <div class="feed-content">
       <p v-if="currentFeed === 'mes-smatchs'">
@@ -42,21 +46,10 @@ export default {
 
 <style scoped>
 .home-page {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  padding-top: 60px; /* Évite le chevauchement avec le FeedSwitcher */
+  padding-top: 120px; /* Ajusté pour prendre en compte le FeedSwitcher et CreatePostForm */
 }
-
 .feed-content {
-  flex: 1; /* Occupe l'espace restant */
-  overflow-y: auto;
   padding: 20px;
-}
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+  margin-bottom: 60px; /* Espace pour la BottomNavBar */
 }
 </style>

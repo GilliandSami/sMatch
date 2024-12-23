@@ -7,7 +7,13 @@ dotenv.config();
 export default defineConfig({
     root: 'src/frontend',
     base: '/',
-    plugins: [vue()],
+    plugins: [vue({
+        template: {
+            compilerOptions: {
+                isCustomElement: tag => tag === 'emoji-picker'
+            }
+        }
+    })],
     server: {
         proxy: {
             '/api': {
