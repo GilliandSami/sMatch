@@ -26,6 +26,23 @@ export function useAuth(baseUrl = null) {
     }
 
     /**
+    * Sauvegarde les informations utilisateur dans le localStorage.
+    * @param {object} userInfo - Les informations utilisateur à stocker.
+    */
+    function storeUserInfo(userInfo) {
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    }
+
+    /**
+     * Récupère les informations utilisateur depuis le localStorage.
+     * @returns {object|null} - Les informations utilisateur ou null si elles n'existent pas.
+     */
+    function getUserInfo() {
+        const userInfo = localStorage.getItem('userInfo');
+        return userInfo ? JSON.parse(userInfo) : null;
+    }
+
+    /**
      * Fonction pour se connecter.
      * @param {object} credentials - Les informations de connexion (email et password).
      * @returns {Promise<object>} - La réponse de l'API contenant le token JWT ou une erreur.
@@ -42,6 +59,7 @@ export function useAuth(baseUrl = null) {
             if (response.token) {
                 setAuthToken(response.token); // Définit le token dans les en-têtes HTTP
                 localStorage.setItem('jwt', response.token); // Stocke le token dans le localStorage
+                storeUserInfo(response.user);
             } else {
                 throw new Error("Le token JWT est manquant dans la réponse.");
             }
@@ -70,6 +88,7 @@ export function useAuth(baseUrl = null) {
             if (response.token) {
                 setAuthToken(response.token); // Définit le token dans les en-têtes HTTP
                 localStorage.setItem('jwt', response.token); // Stocke le token dans le localStorage
+                storeUserInfo(response.user);
             } else {
                 throw new Error("Le token JWT est manquant dans la réponse.");
             }
@@ -88,6 +107,7 @@ export function useAuth(baseUrl = null) {
     function logout() {
         setAuthToken(null); // Supprime le token des en-têtes HTTP
         localStorage.removeItem('jwt'); // Supprime le token du localStorage
+        localStorage.removeItem('userInfo');
         console.log('Déconnexion réussie'); // À remplacer par une notification si nécessaire
     }
 
@@ -95,6 +115,7 @@ export function useAuth(baseUrl = null) {
         login,
         register,
         logout,
-        setAuthToken, // Expose cette fonction pour des cas spécifiques
+        setAuthToken,// Expose cette fonction pour des cas spécifiques
+        getUserInfo,// Expose cette fonction pour des cas spécifiques
     };
 }
