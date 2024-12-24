@@ -17,16 +17,10 @@ export default {
 
 <template>
   <div class="feed-switcher">
-    <button
-      :class="{'active': selectedFeed === 'mes-smatchs'}"
-      @click="selectFeed('mes-smatchs')"
-    >
+    <button :class="{ 'active': selectedFeed === 'mes-smatchs' }" @click="selectFeed('mes-smatchs')">
       Mes Smatchs
     </button>
-    <button
-      :class="{'active': selectedFeed === 'trompe-tes-smatchs'}"
-      @click="selectFeed('trompe-tes-smatchs')"
-    >
+    <button :class="{ 'active': selectedFeed === 'trompe-tes-smatchs' }" @click="selectFeed('trompe-tes-smatchs')">
       Trompe tes Smatchs
     </button>
     <div class="indicator" :class="selectedFeed"></div>
@@ -62,7 +56,8 @@ export default {
 }
 
 .feed-switcher button.active {
-  color: #a020f0; /* Couleur violette */
+  color: #a020f0;
+  /* Couleur violette */
 }
 
 .indicator {
