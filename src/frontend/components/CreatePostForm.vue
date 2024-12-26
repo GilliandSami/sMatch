@@ -1,46 +1,59 @@
 <script>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useFetchApiCrud } from "../utils/FetchCrud";
 // Importer la bibliothèque d'emojis
 import "emoji-picker-element";
 
 export default {
   name: "CreatePostForm",
-  data() {
-    return {
-      postContent: "",
-      userProfilePicture: null,
-      selectedImage: null,
-      showEmojiPicker: false, // Contrôle de la visibilité du sélecteur d'emojis
-    };
-  },
-  methods: {
-    async fetchUserData() {
+  setup() {
+    const postContent = ref("");
+    const userProfilePicture = ref("/assets/default_profile.jpg"); // Image de profil par défaut
+    const selectedImage = ref(null);
+    const showEmojiPicker = ref(false);
+
+    const { read } = useFetchApiCrud("/api/users");
+
+    // Récupérer les données utilisateur
+    const fetchUserData = () => {
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       const userId = userInfo?.id;
-
       const token = localStorage.getItem("jwt");
-      if (!token || !userId) {
+
+      if (!userId || !token) {
         console.error("Utilisateur non connecté ou token manquant !");
-        this.userProfilePicture = "/assets/default_profile.jpg";
+        userProfilePicture.value = "/assets/default_profile.jpg";
         return;
       }
 
-      const { read } = useFetchApiCrud("/api/users");
+      const { data } = read(userId, {
+        Authorization: `Bearer ${token}`,
+      });
 
-      try {
-        const response = await read(userId, {
-          Authorization: `Bearer ${token}`,
-        });
+      // Surveiller les données et les appliquer au profil
+      watch(
+        data,
+        (newData) => {
+          userProfilePicture.value =
+            newData?.profile_picture || "/assets/default_profile.jpg";
+          console.log("Données utilisateur récupérées :", newData);
+        },
+        { immediate: true }
+      );
+    };
 
-        this.userProfilePicture =
-          response.data.profile_picture || "/assets/default_profile.jpg";
-      } catch (error) {
-        console.error("Erreur lors de la récupération des données utilisateur :", error);
-        this.userProfilePicture = "/assets/default_profile.jpg";
-      }
-    },
+    // Charger les données utilisateur au montage
+    fetchUserData();
 
+    // Retourner les données et méthodes pour l'utilisation dans le template
+    return {
+      postContent,
+      userProfilePicture,
+      selectedImage,
+      showEmojiPicker,
+    };
+  },
+  methods: {
     selectImage(event) {
       const file = event.target.files[0];
       if (file) {
@@ -48,17 +61,14 @@ export default {
         alert(`Image sélectionnée : ${file.name}`);
       }
     },
-
     toggleEmojiPicker() {
       this.showEmojiPicker = !this.showEmojiPicker;
     },
-
     addEmoji(event) {
       const emoji = event.detail.unicode;
       this.postContent += emoji;
       this.showEmojiPicker = false;
     },
-
     async submitPost() {
       if (!this.postContent.trim() && !this.selectedImage) {
         alert("Veuillez écrire un message ou sélectionner une image avant de poster !");
@@ -96,10 +106,6 @@ export default {
         alert("Erreur lors de la création du post !");
       }
     },
-  },
-
-  mounted() {
-    this.fetchUserData();
   },
 };
 </script>

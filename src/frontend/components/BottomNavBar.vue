@@ -1,59 +1,61 @@
 <script>
+import { ref, watch, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useFetchApiCrud } from "../utils/FetchCrud";
-import { ref, onMounted } from "vue";
 
 export default {
   name: "BottomNavBar",
-  data() {
-    return {
-      selected: "home", // Icône sélectionnée par défaut
-      userProfilePicture: null, // Image de profil de l'utilisateur
+  setup() {
+    const userProfilePicture = ref("/assets/default_profile.jpg"); // Image par défaut
+    const selected = ref("home"); // Icône sélectionnée par défaut
+    const userData = ref(null); // Données utilisateur réactives
+    const router = useRouter(); // Obtenir l'objet router
+
+    const { read } = useFetchApiCrud("/api/users");
+
+    // Récupération des données utilisateur
+    const fetchUserData = () => {
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const userId = userInfo?.id;
+      const token = localStorage.getItem("jwt");
+
+      if (!userId || !token) {
+        console.error("ID utilisateur ou token JWT manquant !");
+        return;
+      }
+
+      const { data } = read(userId, {
+        Authorization: `Bearer ${token}`,
+      });
+
+      // Mettre à jour les données utilisateur réactives
+      watch(
+        data,
+        (newData) => {
+          userData.value = newData; // Mettre à jour userData
+          userProfilePicture.value =
+            newData?.profile_picture || "/assets/default_profile.jpg";
+        },
+        { immediate: true }
+      );
     };
-  },
-  methods: {
-    async fetchUserData() {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-        const userId = userInfo?.id;
-        if (!userId) {
-            console.error("ID utilisateur introuvable !");
-            this.userProfilePicture = "/assets/default_profile.png";
-            return;
-        }
+    // Sélectionner un élément de la barre de navigation
+    const selectNavItem = (item) => {
+      console.log("Item sélectionné :", item);
+      selected.value = item;
+      router.push(`/${item}`); // Utiliser router.push pour naviguer
+    };
 
-        const token = localStorage.getItem("jwt");
-        if (!token) {
-            console.error("Token JWT manquant !");
-            this.userProfilePicture = "/assets/default_profile.png";
-            return;
-        }
+    // Charger les données utilisateur au montage
+    fetchUserData();
 
-        const { read } = useFetchApiCrud("/api/users");
-
-        try {
-            const response = await read(userId, {
-            Authorization: `Bearer ${token}`,
-            });
-
-            const userData = response?.data || response;
-
-            this.userProfilePicture = userData.profile_picture || "/assets/default_profile.jpg";
-        } catch (error) {
-            console.error(
-            "Erreur lors de la récupération des données utilisateur :",
-            error
-            );
-            this.userProfilePicture = "/assets/default_profile.jpg";
-        }
-    },
-    selectNavItem(item) {
-        console.log("Item sélectionné :", item);
-        this.selected = item;
-        this.$router.push(`/${item}`);
-    },
-    },
-  mounted() {
-    this.fetchUserData();
+    return {
+      userProfilePicture,
+      selected,
+      userData, // Pour afficher dans les logs ou utiliser ailleurs
+      selectNavItem,
+    };
   },
 };
 </script>
