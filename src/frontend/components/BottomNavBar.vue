@@ -35,12 +35,7 @@ export default {
             Authorization: `Bearer ${token}`,
             });
 
-            console.log("Données utilisateur résolues :", response);
-
             const userData = response?.data || response;
-            if (!userData || !userData.profile_picture) {
-            console.log("Aucune image de profil trouvé")
-            }
 
             this.userProfilePicture = userData.profile_picture || "/assets/default_profile.jpg";
         } catch (error) {

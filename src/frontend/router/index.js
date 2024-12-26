@@ -25,10 +25,8 @@ router.beforeEach((to, from, next) => {
 
     if (to.meta.requiresAuth && !isAuthenticated) {
         next("/");
-        console.log("Vous devez être connecté pour accéder à cette page.");
     } else {
         next();
-        console.log("Vous êtes connecté.");
     }
 });
 

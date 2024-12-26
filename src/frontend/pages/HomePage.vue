@@ -28,22 +28,25 @@ export default {
 
 <template>
   <div class="home-page">
-    <!-- Composant de sélection -->
+    <!-- Composant de sélection du fil d'actualité -->
     <FeedSwitcher @feed-selected="onFeedSelected" />
+    
     <!-- Formulaire de création de post -->
     <CreatePostForm />
-    <!-- Contenu dynamique selon le fil -->
+
+    <!-- Fil d'actualité dynamique -->
     <Feed :feedType="currentFeed" />
-    <!-- Barre de navigation -->
+
+    <!-- Barre de navigation en bas -->
     <BottomNavBar />
   </div>
 </template>
 
 <style scoped>
 .home-page {
-  padding-top: 120px;
-  /* Ajusté pour prendre en compte le FeedSwitcher et CreatePostForm */
+  padding-top: 120px; /* Ajusté pour inclure les composants supérieurs */
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 </style>
