@@ -30,7 +30,7 @@ export default {
   <div class="home-page">
     <!-- Composant de sélection du fil d'actualité -->
     <FeedSwitcher @feed-selected="onFeedSelected" />
-    
+
     <!-- Formulaire de création de post -->
     <CreatePostForm />
 
@@ -44,7 +44,8 @@ export default {
 
 <style scoped>
 .home-page {
-  padding-top: 120px; /* Ajusté pour inclure les composants supérieurs */
+  padding-top: 120px;
+  /* Ajusté pour inclure les composants supérieurs */
   display: flex;
   flex-direction: column;
   align-items: center;

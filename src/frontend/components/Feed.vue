@@ -1,5 +1,5 @@
 <script>
-import { computed, ref, watch } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import Post from "./Post.vue";
 import { useFetchApiCrud } from "../utils/FetchCrud";
 
@@ -16,86 +16,82 @@ export default {
     const { readAll } = useFetchApiCrud("/api/posts");
     const { read } = useFetchApiCrud("/api/users");
 
-    const allPosts = ref([]); // Tous les posts pour "trompe-tes-smatchs"
+    const trompeTesSmatchsPosts = ref([]); // Posts pour "trompe-tes-smatchs"
+    const mesSmatchsPosts = ref([]); // Posts pour "mes-smatchs"
     const userData = ref(null); // Données utilisateur pour "mes-smatchs"
-    const userCache = ref(new Map()); // Cache des données utilisateur
-    const isFollowingEmpty = ref(false); // Indicateur d'absence d'utilisateurs suivis
+    const userCache = ref(new Map()); // Cache des détails utilisateur
+    const isFollowingEmpty = ref(false); // Indicateur si l'utilisateur suit quelqu'un
 
-    // Récupérer les posts en fonction du type de fil
-    const loadPosts = () => {
+    const loadPosts = async () => {
       const token = localStorage.getItem("jwt");
 
-      if (props.feedType === "trompe-tes-smatchs") {
-        const { data } = readAll({}, { Authorization: `Bearer ${token}` });
-        allPosts.value = data;
-        isFollowingEmpty.value = false; // Il y a toujours des posts aléatoires
-      }
+      try {
+        if (props.feedType === "trompe-tes-smatchs") {
+          // Charger les posts aléatoires
+          const posts = await readAll({}, { Authorization: `Bearer ${token}` });
+          trompeTesSmatchsPosts.value = posts || [];
+        } else if (props.feedType === "mes-smatchs") {
+          // Charger les posts des utilisateurs suivis
+          const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+          const user = await read(userInfo.id, { Authorization: `Bearer ${token}` });
+          userData.value = user;
 
-      if (props.feedType === "mes-smatchs") {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-        const { data } = read(userInfo.id, { Authorization: `Bearer ${token}` });
-        userData.value = data;
-
-        if (!data?.value?.following || data.value.following.length === 0) {
-          isFollowingEmpty.value = true;
-        } else {
-          isFollowingEmpty.value = false;
+          if (!user?.following || user.following.length === 0) {
+            isFollowingEmpty.value = true;
+            mesSmatchsPosts.value = [];
+          } else {
+            isFollowingEmpty.value = false;
+            // Charger les posts des utilisateurs suivis
+            const posts = [];
+            for (const followedId of user.following) {
+              const followedPosts = await readAll(
+                { userId: followedId },
+                { Authorization: `Bearer ${token}` }
+              );
+              posts.push(...(followedPosts || []));
+            }
+            mesSmatchsPosts.value = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+          }
         }
+      } catch (error) {
+        console.error("Erreur lors du chargement des posts :", error);
       }
     };
 
-    // Calculer les posts aléatoires pour "trompe-tes-smatchs"
-    const randomPosts = computed(() => {
-      if (!allPosts.value?.value) return [];
-      return allPosts.value.value.map((post) => ({
+    const randomPosts = computed(() =>
+      trompeTesSmatchsPosts.value.map((post) => ({
         ...post,
         userDetails: fetchUserDetails(post.user),
-      })).sort(() => Math.random() - 0.5); // Mélanger aléatoirement
-    });
+      }))
+    );
 
-    // Calculer les posts pour les utilisateurs suivis dans "mes-smatchs"
-    const followingPosts = computed(() => {
-      if (!userData.value?.value?.following) return [];
-      const posts = [];
+    const followingPosts = computed(() =>
+      mesSmatchsPosts.value.map((post) => ({
+        ...post,
+        userDetails: fetchUserDetails(post.user),
+      }))
+    );
 
-      userData.value.value.following.forEach((followedId) => {
-        const { data } = readAll(
-          { userId: followedId },
-          { Authorization: `Bearer ${localStorage.getItem("jwt")}` }
-        );
-
-        if (data.value) {
-          data.value.forEach((post) => {
-            posts.push({
-              ...post,
-              userDetails: fetchUserDetails(post.user),
-            });
-          });
-        }
-      });
-
-      return posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    });
-
-    // Récupérer les détails utilisateur pour un post
     const fetchUserDetails = (userId) => {
       if (!userCache.value.has(userId)) {
-        const { data } = read(userId, { Authorization: `Bearer ${localStorage.getItem("jwt")}` });
-
-        watch(
-          data,
-          (newData) => {
-            userCache.value.set(userId, newData);
-          },
-          { immediate: true }
-        );
+        const { read } = useFetchApiCrud("/api/users");
+        read(userId, { Authorization: `Bearer ${localStorage.getItem("jwt")}` })
+          .then((data) => userCache.value.set(userId, data))
+          .catch((error) => console.error("Erreur utilisateur :", error));
       }
-      // Retourner les données utilisateur (ou undefined si pas encore récupérées)
       return userCache.value.get(userId);
     };
 
-    // Surveiller les changements du type de fil
-    watch(() => props.feedType, loadPosts, { immediate: true });
+    onMounted(loadPosts);
+
+    // Regarder les changements de la prop feedType et recharger les posts
+    watch(
+      () => props.feedType,
+      async () => {
+        await loadPosts();
+      },
+      { immediate: true } // Exécuter immédiatement pour le premier rendu
+    );
 
     return {
       randomPosts,
@@ -114,20 +110,11 @@ export default {
     </p>
 
     <!-- Posts pour "trompe-tes-smatchs" -->
-    <Post
-      v-if="feedType === 'trompe-tes-smatchs'"
-      v-for="post in randomPosts"
-      :key="post._id"
-      :post="post"
-    />
+    <Post v-if="feedType === 'trompe-tes-smatchs'" v-for="post in randomPosts" :key="post._id" :post="post" />
 
     <!-- Posts pour "mes-smatchs" -->
-    <Post
-      v-if="feedType === 'mes-smatchs'"
-      v-for="post in followingPosts"
-      :key="post._id"
-      :post="post"
-    />
+    <Post v-if="feedType === 'mes-smatchs' && !isFollowingEmpty" v-for="post in followingPosts" :key="post._id"
+      :post="post" />
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <script>
-import { ref, watch, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useFetchApiCrud } from "../utils/FetchCrud";
 
@@ -14,7 +14,7 @@ export default {
     const { read } = useFetchApiCrud("/api/users");
 
     // Récupération des données utilisateur
-    const fetchUserData = () => {
+    const fetchUserData = async () => {
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       const userId = userInfo?.id;
       const token = localStorage.getItem("jwt");
@@ -24,20 +24,19 @@ export default {
         return;
       }
 
-      const { data } = read(userId, {
-        Authorization: `Bearer ${token}`,
-      });
+      try {
+        // Appel à l'API pour récupérer les données utilisateur
+        const response = await read(userId, {
+          Authorization: `Bearer ${token}`,
+        });
 
-      // Mettre à jour les données utilisateur réactives
-      watch(
-        data,
-        (newData) => {
-          userData.value = newData; // Mettre à jour userData
-          userProfilePicture.value =
-            newData?.profile_picture || "/assets/default_profile.jpg";
-        },
-        { immediate: true }
-      );
+        // Mettre à jour les données utilisateur réactives
+        userData.value = response;
+        userProfilePicture.value =
+          response?.profile_picture || "/assets/default_profile.jpg";
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données utilisateur :", error);
+      }
     };
 
     // Sélectionner un élément de la barre de navigation
@@ -48,12 +47,12 @@ export default {
     };
 
     // Charger les données utilisateur au montage
-    fetchUserData();
+    onMounted(fetchUserData);
 
     return {
       userProfilePicture,
       selected,
-      userData, // Pour afficher dans les logs ou utiliser ailleurs
+      userData,
       selectNavItem,
     };
   },
@@ -63,31 +62,19 @@ export default {
 <template>
   <div class="bottom-nav">
     <!-- Icône Home -->
-    <button
-      :class="{ active: selected === 'home' }"
-      @click="selectNavItem('home')"
-    >
+    <button :class="{ active: selected === 'home' }" @click="selectNavItem('home')">
       <span class="material-icons">home</span>
     </button>
     <!-- Icône Search -->
-    <button
-      :class="{ active: selected === 'search' }"
-      @click="selectNavItem('search')"
-    >
+    <button :class="{ active: selected === 'search' }" @click="selectNavItem('search')">
       <span class="material-icons">search</span>
     </button>
     <!-- Icône Stars -->
-    <button
-      :class="{ active: selected === 'groups' }"
-      @click="selectNavItem('groups')"
-    >
+    <button :class="{ active: selected === 'groups' }" @click="selectNavItem('groups')">
       <span class="material-icons">star</span>
     </button>
     <!-- Icône Account -->
-    <button
-      :class="{ profile: true, active: selected === 'account' }"
-      @click="selectNavItem('account')"
-    >
+    <button :class="{ profile: true, active: selected === 'account' }" @click="selectNavItem('account')">
       <img :src="userProfilePicture" alt="Profile" class="profile-pic" />
     </button>
   </div>
@@ -121,7 +108,8 @@ export default {
 }
 
 .bottom-nav button.active {
-  color: #a020f0; /* Couleur violette pour l'icône active */
+  color: #a020f0;
+  /* Couleur violette pour l'icône active */
 }
 
 .bottom-nav button.profile {
@@ -129,7 +117,8 @@ export default {
 }
 
 .bottom-nav button.profile.active {
-  border: 2px solid #a020f0; /* Bordure violette si active */
+  border: 2px solid #a020f0;
+  /* Bordure violette si active */
   border-radius: 50%;
 }
 

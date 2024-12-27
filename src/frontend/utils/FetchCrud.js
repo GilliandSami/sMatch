@@ -1,4 +1,4 @@
-import { useFetchApi, setDefaultHeaders } from "./FetchAPI";
+import { useFetchApi } from "./FetchAPI";
 
 /**
  * Fetch data from an API and perform CRUD operations
@@ -12,141 +12,153 @@ import { useFetchApi, setDefaultHeaders } from "./FetchAPI";
  * @property {Function} create - Function to create data
  * @property {Function} del - Function to delete data
  * @property {Function} update - Function to update data
- * @property {Function} fetchApiToRef - Function to fetch data and return it in refs
+ * @property {Function} likeItem - Function to like an item
+ * @property {Function} unlikeItem - Function to unlike an item
  * @example
  * const userCrud = useFetchApiCrud('users');
  */
 export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
-
-    const { fetchApiToRef } = useFetchApi(baseUrl, additionalHeaders);
+    const { fetchApi } = useFetchApi(baseUrl, additionalHeaders);
 
     // Fetch a single item by ID
-    function read(id, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: `${path}/${id}`,
-            method: 'GET',
-            headers,
-            timeout,
-        });
+    async function read(id, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: `${path}/${id}`,
+                method: "GET",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error fetching item with ID ${id}:`, error);
+            throw error;
+        }
     }
 
     // Fetch all items or a paginated list
-    function readAll(queryParams = {}, headers = {}, timeout = 5000) {
+    async function readAll(queryParams = {}, headers = {}, timeout = 5000) {
         const query = new URLSearchParams(queryParams).toString();
         const urlWithParams = query ? `${path}?${query}` : path;
 
-        return fetchApiToRef({
-            url: urlWithParams,
-            method: 'GET',
-            headers,
-            timeout,
-        });
+        try {
+            return await fetchApi({
+                url: urlWithParams,
+                method: "GET",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error fetching items with query params ${query}:`, error);
+            throw error;
+        }
     }
 
     // Create a new item
-    function create(data, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: path,
-            data,
-            method: 'POST',
-            headers,
-            timeout,
-        });
+    async function create(data, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: path,
+                data,
+                method: "POST",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error("Error creating item:", error);
+            throw error;
+        }
     }
 
     // Update an existing item by ID
-    function update(id, data, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: `${path}/${id}`,
-            data,
-            method: 'PATCH',
-            headers,
-            timeout,
-        });
+    async function update(id, data, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: `${path}/${id}`,
+                data,
+                method: "PATCH",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error updating item with ID ${id}:`, error);
+            throw error;
+        }
     }
 
     // Delete an item by ID
-    function del(id, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: `${path}/${id}`,
-            method: 'DELETE',
-            headers,
-            timeout,
-        });
-    }
-
-    // Follow a user
-    function followUser(userId, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: `${path}/${userId}/follow`,
-            method: 'POST',
-            headers,
-            timeout,
-        });
-    }
-
-    // Unfollow a user
-    function unfollowUser(userId, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: `${path}/${userId}/follow`,
-            method: 'DELETE',
-            headers,
-            timeout,
-        });
-    }
-
-    // Fetch comments for a specific post
-    function getCommentsByPost(postId, queryParams = {}, headers = {}, timeout = 5000) {
-        const query = new URLSearchParams(queryParams).toString();
-        const urlWithParams = query ? `comments/${postId}?${query}` : `comments/${postId}`;
-
-        return fetchApiToRef({
-            url: urlWithParams,
-            method: 'GET',
-            headers,
-            timeout,
-        });
+    async function del(id, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: `${path}/${id}`,
+                method: "DELETE",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error deleting item with ID ${id}:`, error);
+            throw error;
+        }
     }
 
     // Like an item (post, comment, etc.)
-    function likeItem(id, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: `${path}/${id}/like`,
-            method: 'POST',
-            headers,
-            timeout,
-        });
+    async function likeItem(id, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: `${path}/${id}/like`,
+                method: "POST",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error liking item with ID ${id}:`, error);
+            throw error;
+        }
     }
 
     // Unlike an item (post, comment, etc.)
-    function unlikeItem(id, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: `${path}/${id}/like`,
-            method: 'DELETE',
-            headers,
-            timeout,
-        });
+    async function unlikeItem(id, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: `${path}/${id}/like`,
+                method: "DELETE",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error unliking item with ID ${id}:`, error);
+            throw error;
+        }
     }
 
     // Add a member to a group
-    function addMember(groupId, memberData, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: `groups/${groupId}/members`,
-            data: memberData,
-            method: 'POST',
-            headers,
-            timeout,
-        });
+    async function addMember(groupId, memberData, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: `groups/${groupId}/members`,
+                data: memberData,
+                method: "POST",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error adding member to group ${groupId}:`, error);
+            throw error;
+        }
     }
 
     // Remove a member from a group
-    function removeMember(groupId, userId, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: `groups/${groupId}/members/${userId}`,
-            method: 'DELETE',
-            headers,
-            timeout,
-        });
+    async function removeMember(groupId, userId, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: `groups/${groupId}/members/${userId}`,
+                method: "DELETE",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error removing member with ID ${userId} from group ${groupId}:`, error);
+            throw error;
+        }
     }
 
     return {
@@ -155,13 +167,9 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
         create,
         update,
         del,
-        followUser,
-        unfollowUser,
-        getCommentsByPost,
         likeItem,
         unlikeItem,
         addMember,
         removeMember,
-        fetchApiToRef,
     };
 }

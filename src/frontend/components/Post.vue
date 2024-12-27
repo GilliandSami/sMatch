@@ -1,4 +1,6 @@
 <script>
+import { useFetchApiCrud } from "../utils/FetchCrud";
+
 export default {
   name: "Post",
   props: {
@@ -13,9 +15,34 @@ export default {
       hasLiked: false,
     };
   },
+  setup() {
+    const { followUser, unfollowUser, likeItem, unlikeItem } = useFetchApiCrud("/api/users");
+    const postActions = useFetchApiCrud("/api/posts");
+
+    return {
+      followUser,
+      unfollowUser,
+      likeItem,
+      unlikeItem,
+      postActions,
+    };
+  },
   methods: {
     async toggleFollow() {
       try {
+        const userId = this.post.userDetails?.id;
+        const token = localStorage.getItem("jwt");
+
+        if (this.isFollowing) {
+          await this.unfollowUser(userId, {
+            Authorization: `Bearer ${token}`,
+          });
+        } else {
+          await this.followUser(userId, {
+            Authorization: `Bearer ${token}`,
+          });
+        }
+
         this.isFollowing = !this.isFollowing;
         alert(`Vous ${this.isFollowing ? "suivez" : "ne suivez plus"} ${this.post.userDetails?.username || "Utilisateur inconnu"}`);
       } catch (error) {
@@ -24,8 +51,21 @@ export default {
     },
     async toggleLike() {
       try {
+        const token = localStorage.getItem("jwt");
+
+        if (this.hasLiked) {
+          await this.unlikeItem(this.post._id, {
+            Authorization: `Bearer ${token}`,
+          });
+          this.post.likes--;
+        } else {
+          await this.likeItem(this.post._id, {
+            Authorization: `Bearer ${token}`,
+          });
+          this.post.likes++;
+        }
+
         this.hasLiked = !this.hasLiked;
-        this.post.likes = this.hasLiked ? this.post.likes + 1 : this.post.likes - 1;
       } catch (error) {
         console.error("Erreur lors du like :", error);
       }
@@ -38,7 +78,7 @@ export default {
   mounted() {
     const userId = localStorage.getItem("userId");
     this.isFollowing = this.post.userDetails?.followers?.includes(userId) || false;
-    this.hasLiked = this.post.likes?.includes(userId) || false;
+    this.hasLiked = this.post.likes?.some((like) => like === userId) || false;
   },
 };
 </script>

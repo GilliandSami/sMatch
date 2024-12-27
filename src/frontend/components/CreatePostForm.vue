@@ -1,5 +1,5 @@
 <script>
-import { ref, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { useFetchApiCrud } from "../utils/FetchCrud";
 // Importer la bibliothèque d'emojis
 import "emoji-picker-element";
@@ -12,10 +12,10 @@ export default {
     const selectedImage = ref(null);
     const showEmojiPicker = ref(false);
 
-    const { read } = useFetchApiCrud("/api/users");
+    const { read, create } = useFetchApiCrud("/api/users");
 
     // Récupérer les données utilisateur
-    const fetchUserData = () => {
+    const fetchUserData = async () => {
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       const userId = userInfo?.id;
       const token = localStorage.getItem("jwt");
@@ -26,51 +26,24 @@ export default {
         return;
       }
 
-      const { data } = read(userId, {
-        Authorization: `Bearer ${token}`,
-      });
+      try {
+        const response = await read(userId, {
+          Authorization: `Bearer ${token}`,
+        });
 
-      // Surveiller les données et les appliquer au profil
-      watch(
-        data,
-        (newData) => {
-          userProfilePicture.value =
-            newData?.profile_picture || "/assets/default_profile.jpg";
-          console.log("Données utilisateur récupérées :", newData);
-        },
-        { immediate: true }
-      );
+        userProfilePicture.value =
+          response?.profile_picture || "/assets/default_profile.jpg";
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données utilisateur :", error);
+      }
     };
 
     // Charger les données utilisateur au montage
-    fetchUserData();
+    onMounted(fetchUserData);
 
-    // Retourner les données et méthodes pour l'utilisation dans le template
-    return {
-      postContent,
-      userProfilePicture,
-      selectedImage,
-      showEmojiPicker,
-    };
-  },
-  methods: {
-    selectImage(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.selectedImage = file;
-        alert(`Image sélectionnée : ${file.name}`);
-      }
-    },
-    toggleEmojiPicker() {
-      this.showEmojiPicker = !this.showEmojiPicker;
-    },
-    addEmoji(event) {
-      const emoji = event.detail.unicode;
-      this.postContent += emoji;
-      this.showEmojiPicker = false;
-    },
-    async submitPost() {
-      if (!this.postContent.trim() && !this.selectedImage) {
+    // Fonction pour soumettre un post
+    const submitPost = async () => {
+      if (!postContent.value.trim() && !selectedImage.value) {
         alert("Veuillez écrire un message ou sélectionner une image avant de poster !");
         return;
       }
@@ -79,10 +52,10 @@ export default {
       const { create } = useFetchApiCrud("/api/posts");
 
       try {
-        if (this.selectedImage) {
+        if (selectedImage.value) {
           const formData = new FormData();
-          formData.append("content", this.postContent.trim());
-          formData.append("media_uri", this.selectedImage);
+          formData.append("content", postContent.value.trim());
+          formData.append("media_uri", selectedImage.value);
 
           await create(formData, {
             Authorization: `Bearer ${token}`,
@@ -90,7 +63,7 @@ export default {
         } else {
           await create(
             {
-              content: this.postContent.trim(),
+              content: postContent.value.trim(),
             },
             {
               Authorization: `Bearer ${token}`,
@@ -99,13 +72,34 @@ export default {
         }
 
         alert("Votre post a été publié !");
-        this.postContent = "";
-        this.selectedImage = null;
+        postContent.value = "";
+        selectedImage.value = null;
       } catch (error) {
         console.error("Erreur lors de la création du post :", error);
         alert("Erreur lors de la création du post !");
       }
-    },
+    };
+
+    return {
+      postContent,
+      userProfilePicture,
+      selectedImage,
+      showEmojiPicker,
+      submitPost,
+      toggleEmojiPicker: () => (showEmojiPicker.value = !showEmojiPicker.value),
+      addEmoji: (event) => {
+        const emoji = event.detail.unicode;
+        postContent.value += emoji;
+        showEmojiPicker.value = false;
+      },
+      selectImage: (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          selectedImage.value = file;
+          alert(`Image sélectionnée : ${file.name}`);
+        }
+      },
+    };
   },
 };
 </script>
@@ -114,22 +108,13 @@ export default {
   <div class="create-post-form">
     <img :src="userProfilePicture" alt="Profile" class="profile-pic" />
     <div class="form-content">
-      <textarea
-        v-model="postContent"
-        placeholder="Quoi de neuf ?!"
-        maxlength="300"
-      ></textarea>
+      <textarea v-model="postContent" placeholder="Quoi de neuf ?!" maxlength="300"></textarea>
       <div class="actions">
         <div class="left-actions">
           <!-- Bouton d'ajout d'image -->
           <button>
             <label for="image-upload" class="material-icons">image</label>
-            <input
-              type="file"
-              id="image-upload"
-              @change="selectImage"
-              style="display: none"
-            />
+            <input type="file" id="image-upload" @change="selectImage" style="display: none" />
           </button>
           <!-- Bouton d'ajout d'emojis -->
           <button @click="toggleEmojiPicker">
@@ -143,11 +128,8 @@ export default {
     </div>
 
     <!-- Emoji Picker -->
-    <emoji-picker
-      v-if="showEmojiPicker"
-      @emoji-click="addEmoji"
-      style="position: absolute; bottom: 70px; left: 10px; z-index: 1000;"
-    ></emoji-picker>
+    <emoji-picker v-if="showEmojiPicker" @emoji-click="addEmoji"
+      style="position: absolute; bottom: 70px; left: 10px; z-index: 1000;"></emoji-picker>
   </div>
 </template>
 
