@@ -120,7 +120,7 @@ export default {
 
 <style scoped>
 .feed {
-  padding: 15px;
+  padding: 75px 15px 15px 15px;
   overflow-y: auto;
 }
 

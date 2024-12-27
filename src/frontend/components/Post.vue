@@ -1,5 +1,6 @@
 <script>
 import { useFetchApiCrud } from "../utils/FetchCrud";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Post",
@@ -11,44 +12,20 @@ export default {
   },
   data() {
     return {
-      isFollowing: false,
-      hasLiked: false,
+      hasLiked: false, // État local pour savoir si l'utilisateur a liké ce post
     };
   },
   setup() {
-    const { followUser, unfollowUser, likeItem, unlikeItem } = useFetchApiCrud("/api/users");
-    const postActions = useFetchApiCrud("/api/posts");
+    const { likeItem, unlikeItem } = useFetchApiCrud("/api/posts");
+    const router = useRouter();
 
     return {
-      followUser,
-      unfollowUser,
       likeItem,
       unlikeItem,
-      postActions,
+      router, // Utiliser le routeur pour la navigation
     };
   },
   methods: {
-    async toggleFollow() {
-      try {
-        const userId = this.post.userDetails?.id;
-        const token = localStorage.getItem("jwt");
-
-        if (this.isFollowing) {
-          await this.unfollowUser(userId, {
-            Authorization: `Bearer ${token}`,
-          });
-        } else {
-          await this.followUser(userId, {
-            Authorization: `Bearer ${token}`,
-          });
-        }
-
-        this.isFollowing = !this.isFollowing;
-        alert(`Vous ${this.isFollowing ? "suivez" : "ne suivez plus"} ${this.post.userDetails?.username || "Utilisateur inconnu"}`);
-      } catch (error) {
-        console.error("Erreur lors du suivi :", error);
-      }
-    },
     async toggleLike() {
       try {
         const token = localStorage.getItem("jwt");
@@ -57,28 +34,39 @@ export default {
           await this.unlikeItem(this.post._id, {
             Authorization: `Bearer ${token}`,
           });
-          this.post.likes--;
+          const userId = localStorage.getItem("userId");
+          this.post.likes = this.post.likes.filter((likeId) => likeId !== userId);
         } else {
           await this.likeItem(this.post._id, {
             Authorization: `Bearer ${token}`,
           });
-          this.post.likes++;
+          const userId = localStorage.getItem("userId");
+          this.post.likes.push(userId);
         }
 
         this.hasLiked = !this.hasLiked;
       } catch (error) {
-        console.error("Erreur lors du like :", error);
+        console.error("Erreur lors du like/unlike :", error);
       }
     },
+
     sharePost() {
       navigator.clipboard.writeText(`${window.location.origin}/posts/${this.post._id}`);
       alert("Lien copié dans le presse-papier !");
     },
+
+    checkIfLiked() {
+      const userId = localStorage.getItem("userId");
+      this.hasLiked = this.post.likes?.some((likeId) => likeId === userId) || false;
+    },
+
+    goToUserProfile() {
+      // Rediriger vers le profil utilisateur
+      this.router.push(`/profile/${this.post.user}`);
+    },
   },
   mounted() {
-    const userId = localStorage.getItem("userId");
-    this.isFollowing = this.post.userDetails?.followers?.includes(userId) || false;
-    this.hasLiked = this.post.likes?.some((like) => like === userId) || false;
+    this.checkIfLiked();
   },
 };
 </script>
@@ -86,9 +74,9 @@ export default {
 <template>
   <div class="post">
     <div class="post-header">
-      <img :src="post.userDetails?.profile_picture || '/assets/default_profile.jpg'" alt="User" class="profile-pic" />
-      <button v-if="!isFollowing" class="follow-btn" @click="toggleFollow">+</button>
-      <div>
+      <img :src="post.userDetails?.profile_picture || '/assets/default_profile.jpg'" alt="User" class="profile-pic"
+        @click="goToUserProfile" />
+      <div class="post-info">
         <h4>{{ post.userDetails?.username || "Utilisateur inconnu" }}</h4>
         <small>{{ new Date(post.created_at).toLocaleDateString() }}</small>
       </div>
@@ -108,40 +96,79 @@ export default {
 
 <style scoped>
 .post {
-  padding: 15px;
-  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+  /* Fond blanc */
+  color: #000;
+  /* Texte noir */
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Ombre douce */
 }
 
 .post-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  margin-right: 130px;
 }
 
 .profile-pic {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 15px;
 }
 
-.follow-btn {
-  margin-left: auto;
-  background-color: #a020f0;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 5px;
-  cursor: pointer;
+.post-info {
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+}
+
+.post-info h4 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.post-info small {
+  font-size: 14px;
+  color: gray;
 }
 
 .post-content {
-  margin-top: 10px;
+  margin: 15px 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .post-actions button {
   background: none;
   border: none;
   cursor: pointer;
-  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #ff6c19;
+  /* Boutons orange */
+}
+
+.post-actions button:hover {
+  color: #ff8145;
+  /* Orange plus clair au hover */
+}
+
+.material-icons {
+  font-size: 20px;
+  vertical-align: middle;
 }
 </style>
