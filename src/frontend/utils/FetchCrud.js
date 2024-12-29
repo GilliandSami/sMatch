@@ -161,6 +161,36 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
         }
     }
 
+    // Suivre un utilisateur
+    async function followUser(userId, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: `${path}/${userId}/follow`,
+                method: "POST",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error following user with ID ${userId}:`, error);
+            throw error;
+        }
+    }
+
+    // Ne plus suivre un utilisateur
+    async function unfollowUser(userId, headers = {}, timeout = 5000) {
+        try {
+            return await fetchApi({
+                url: `${path}/${userId}/follow`,
+                method: "DELETE",
+                headers,
+                timeout,
+            });
+        } catch (error) {
+            console.error(`Error unfollowing user with ID ${userId}:`, error);
+            throw error;
+        }
+    }
+
     return {
         read,
         readAll,
@@ -171,5 +201,7 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
         unlikeItem,
         addMember,
         removeMember,
+        followUser,
+        unfollowUser
     };
 }
