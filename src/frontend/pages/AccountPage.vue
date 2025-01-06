@@ -1,15 +1,16 @@
 <script>
 import AccountInformation from "../components/AccountInformation.vue";
 import AccountSwitcher from "../components/AccountSwitcher.vue";
+import AccountPosts from "../components/AccountPosts.vue";
 import BottomNavBar from "../components/BottomNavBar.vue";
 
 export default {
   name: "AccountPage",
-  components: { AccountInformation, AccountSwitcher, BottomNavBar },
+  components: { AccountInformation, AccountSwitcher, AccountPosts, BottomNavBar },
   data() {
     return {
       userId: this.$route.params.userId || JSON.parse(localStorage.getItem("userInfo")).id,
-      selectedTab: "posts", // Par défaut, affiche les posts de l'utilisateur
+      selectedTab: "posts", // Onglet par défaut (Posts)
     };
   },
   methods: {
@@ -22,36 +23,40 @@ export default {
 
 <template>
   <div class="account-page">
-    <!-- Informations utilisateur -->
+    <!-- Composant AccountInformation fixé en haut -->
     <AccountInformation :userId="userId" />
 
-    <!-- Commutateur entre Posts et Likes -->
+    <!-- Composant AccountSwitcher fixé sous AccountInformation -->
     <AccountSwitcher @tab-selected="handleTabSelection" />
 
-    <!-- Contenu selon l'onglet sélectionné -->
-    <div class="content">
-      <div v-if="selectedTab === 'posts'">
-        <!-- Placeholder pour les posts -->
-        <p>Affichage des posts de l'utilisateur</p>
-      </div>
-      <div v-else>
-        <!-- Placeholder pour les likes -->
-        <p>Affichage des likes de l'utilisateur</p>
-      </div>
+    <!-- Composant AccountPosts pour afficher les posts -->
+    <div class="posts-container">
+      <AccountPosts :userId="userId" :selectedTab="selectedTab" />
     </div>
 
-    <!-- Barre de navigation -->
+    <!-- Barre de navigation en bas -->
     <BottomNavBar />
   </div>
 </template>
 
 <style scoped>
 .account-page {
-  padding-top: 120px; /* Espace pour le header et le switcher */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+  background-color: #f8f9fa;
+  overflow: hidden;
 }
 
-.content {
-  padding: 10px;
-  margin-top: 10px; /* Ajoute de l'espace après le switcher */
+/* Container pour AccountPosts */
+.posts-container {
+  position: absolute;
+  top: 170px; /* Hauteur combinée de AccountInformation + AccountSwitcher */
+  bottom: 60px; /* Compense la hauteur de BottomNavBar */
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  background: white;
 }
 </style>

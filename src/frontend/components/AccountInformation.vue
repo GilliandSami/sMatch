@@ -119,10 +119,19 @@ export default {
         ></textarea>
         <span v-else>{{ userInfo.username }}</span>
       </h2>
-      <button v-if="isAuthenticatedUser" @click="isEditing ? saveChanges() : (isEditing = true)">
+      <button
+        v-if="isAuthenticatedUser"
+        class="action-button"
+        :class="{ edit: isEditing }"
+        @click="isEditing ? saveChanges() : (isEditing = true)"
+      >
         {{ isEditing ? "Terminer" : "Modifier" }}
       </button>
-      <button v-else @click="toggleFollow">
+      <button
+        v-else
+        class="action-button follow"
+        @click="toggleFollow"
+      >
         {{ isFollowing ? "Break-up" : "Smatcher" }}
       </button>
     </div>
@@ -159,6 +168,7 @@ export default {
 </template>
 
 <style scoped>
+/* Général */
 .account-information {
   background: white;
   color: #000;
@@ -187,6 +197,55 @@ export default {
   width: 100%;
 }
 
+/* Boutons d'action */
+.action-button {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  outline: none;
+}
+
+/* Bouton "Modifier" */
+.action-button.edit {
+  background-color: #ff6c19;
+  color: white;
+  box-shadow: 0px 4px 6px rgba(255, 108, 25, 0.3);
+}
+
+.action-button.edit:hover {
+  background-color: #ff8145;
+  box-shadow: 0px 6px 8px rgba(255, 108, 25, 0.4);
+}
+
+/* Bouton "Smatcher" */
+.action-button.follow {
+  background-color: #4caf50;
+  color: white;
+  box-shadow: 0px 4px 6px rgba(76, 175, 80, 0.3);
+}
+
+.action-button.follow:hover {
+  background-color: #66bb6a;
+  box-shadow: 0px 6px 8px rgba(76, 175, 80, 0.4);
+}
+
+/* Bouton "Break-up" */
+.action-button.follow.breakup {
+  background-color: #f44336;
+  color: white;
+  box-shadow: 0px 4px 6px rgba(244, 67, 54, 0.3);
+}
+
+.action-button.follow.breakup:hover {
+  background-color: #e57373;
+  box-shadow: 0px 6px 8px rgba(244, 67, 54, 0.4);
+}
+
+/* Profile */
 .profile {
   display: flex;
   align-items: center;
@@ -232,6 +291,7 @@ export default {
   cursor: pointer;
 }
 
+/* Stats */
 .stats {
   display: flex;
   gap: 20px;
@@ -250,6 +310,7 @@ export default {
   color: #666;
 }
 
+/* Description */
 .description {
   margin-top: 20px;
   color: #000;
