@@ -87,7 +87,7 @@ export default {
     <!-- Nom et description de l'utilisateur -->
     <div class="user-info">
       <h4>{{ user.username }}</h4>
-      <p>{{ user.description || "Viens me Smatcher !" }}</p>
+      <p>{{ user.bio || "Viens me Smatcher !" }}</p>
     </div>
   </div>
 </template>

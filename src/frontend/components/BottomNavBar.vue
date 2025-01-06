@@ -43,7 +43,15 @@ export default {
     const selectNavItem = (item) => {
       console.log("Item sélectionné :", item);
       selected.value = item;
-      router.push(`/${item}`); // Utiliser router.push pour naviguer
+      if (item === "account") {
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        const userId = userInfo?.id;
+        if (userId) {
+          router.push(`/profile/${userId}`); // Rediriger vers la page de profil
+        }
+      } else {
+        router.push(`/${item}`); // Utiliser router.push pour naviguer
+      }
     };
 
     // Charger les données utilisateur au montage
@@ -74,7 +82,10 @@ export default {
       <span class="material-icons">star</span>
     </button>
     <!-- Icône Account -->
-    <button :class="{ profile: true, active: selected === 'account' }" @click="selectNavItem('account')">
+    <button
+      :class="{ profile: true, active: selected === 'account' }"
+      @click="selectNavItem('account')"
+    >
       <img :src="userProfilePicture" alt="Profile" class="profile-pic" />
     </button>
   </div>
