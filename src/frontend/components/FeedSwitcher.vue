@@ -56,8 +56,7 @@ export default {
 }
 
 .feed-switcher button.active {
-  color: #a020f0;
-  /* Couleur violette */
+  color: #D1B7FF;
 }
 
 .indicator {
@@ -65,7 +64,7 @@ export default {
   bottom: 0;
   height: 3px;
   width: 50%;
-  background-color: #a020f0;
+  background-color: #D1B7FF;
   transition: transform 0.3s ease;
 }
 

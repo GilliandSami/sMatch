@@ -96,7 +96,7 @@ export default {
 
 <style scoped>
 .post {
-  background-color: #fff;
+  background-color: #ffff;
   /* Fond blanc */
   color: #000;
   /* Texte noir */
@@ -112,7 +112,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
-  margin-right: 130px;
+  margin-right: 15px;
 }
 
 .profile-pic {
@@ -125,7 +125,7 @@ export default {
 .post-info {
   display: flex;
   align-items: baseline;
-  gap: 15px;
+  width: 100%;
 }
 
 .post-info h4 {
@@ -136,6 +136,7 @@ export default {
 
 .post-info small {
   font-size: 14px;
+  margin-left: auto;
   color: gray;
 }
 

@@ -161,12 +161,14 @@ export default {
 
 textarea {
   width: 100%;
-  border: 1px solid #ddd;
+  background-color: #f0f0f0;
+  border: none;
   border-radius: 20px;
   padding: 10px;
   resize: none;
   font-size: 14px;
   outline: none;
+  color: #4a4a4a;
 }
 
 .actions {
@@ -185,11 +187,26 @@ button {
   border: none;
   cursor: pointer;
   margin-left: 5px;
-  color: gray;
+  color: #D1B7FF;
 }
 
 .send-button {
-  color: #a020f0;
+  background-color: #D1B7FF;
+  border: none;
+  border-radius: 35%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 30px;
+  padding: 0;
+}
+
+.send-button .material-icons {
+  font-size: 20px;
+  color: white;
 }
 
 button span.material-icons {
