@@ -35,7 +35,7 @@ export default {
 .account-switcher {
   display: flex;
   position: fixed;
-  top: 230px; /* En dessous du composant AccountInformation */
+  top: 250px; /* En dessous du composant AccountInformation */
   left: 0;
   right: 0;
   background-color: white;

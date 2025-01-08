@@ -111,7 +111,7 @@ export default {
 <style scoped>
 .account-posts {
   padding: 20px;
-  padding-top: 140px;
+  padding-top: 160px;
   overflow-y: auto;
 }
 

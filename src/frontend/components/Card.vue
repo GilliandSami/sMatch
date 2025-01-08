@@ -13,6 +13,7 @@ export default {
   data() {
     return {
       isFollowing: false, // État pour savoir si l'utilisateur authentifié suit l'utilisateur affiché
+      isSelf: false, // État pour vérifier si l'utilisateur affiché est l'utilisateur authentifié
     };
   },
   setup() {
@@ -29,6 +30,8 @@ export default {
     async toggleFollow(event) {
       // Empêcher la propagation du clic sur la carte
       event.stopPropagation();
+
+      if (this.isSelf) return; // Empêcher les actions de suivi sur soi-même
 
       const token = localStorage.getItem("jwt");
       try {
@@ -55,6 +58,10 @@ export default {
         (followerId) => followerId === userInfo.id
       );
     },
+    checkIfSelf() {
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      this.isSelf = this.user._id === userInfo.id; // Vérifie si l'utilisateur affiché est l'utilisateur authentifié
+    },
     navigateToProfile() {
       // Navigation vers la page du profil de l'utilisateur
       this.router.push(`/profile/${this.user._id}`);
@@ -62,14 +69,16 @@ export default {
   },
   mounted() {
     this.checkIfFollowing();
+    this.checkIfSelf(); // Appeler la vérification lors du montage
   },
 };
 </script>
 
 <template>
   <div class="card" @click="navigateToProfile">
-    <!-- Bouton suivre/désabonner -->
+    <!-- Bouton suivre/désabonner, affiché uniquement si ce n'est pas soi-même -->
     <button
+      v-if="!isSelf"
       class="follow-btn"
       :class="{ following: isFollowing }"
       @click="toggleFollow"
@@ -91,6 +100,7 @@ export default {
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .card {

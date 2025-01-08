@@ -1,6 +1,8 @@
 <script>
 import { ref } from "vue";
 import { useFetchApiCrud } from "../utils/FetchCrud";
+import { useAuth } from "../utils/authUtils"; // Importez useAuth
+import { useRouter } from "vue-router"; // Importer le routeur pour redirection
 
 export default {
   name: "AccountInformation",
@@ -19,6 +21,9 @@ export default {
     const isFollowing = ref(false);
     const selectedImage = ref(null);
     const postsCount = ref(0);
+    const router = useRouter();
+
+    const { logout } = useAuth(); // Instanciez useAuth pour accéder à logout
 
     const fetchUserInfo = async () => {
       try {
@@ -56,38 +61,41 @@ export default {
       }
     };
 
-  const saveChanges = async () => {
-    try {
-      const token = localStorage.getItem("jwt");
+    const saveChanges = async () => {
+      try {
+        const token = localStorage.getItem("jwt");
 
-      // Créez un objet avec les données à mettre à jour
-      const updateData = {
-        username: userInfo.value.username,
-        bio: userInfo.value.bio,
-      };
+        const updateData = {
+          username: userInfo.value.username,
+          bio: userInfo.value.bio,
+        };
 
-      console.log("Données envoyées à l'API :", updateData);
+        console.log("Données envoyées à l'API :", updateData);
 
-      // Appelez la méthode update
-      await update(props.userId, updateData, {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json", // Important : Indiquez que vous envoyez un JSON
-      });
+        await update(props.userId, updateData, {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        });
 
-      isEditing.value = false;
-      await fetchUserInfo();
-      alert("Modifications enregistrées !");
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour :", error);
-      alert("Erreur lors de la mise à jour des informations.");
-    }
-  };
+        isEditing.value = false;
+        await fetchUserInfo();
+        alert("Modifications enregistrées !");
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour :", error);
+        alert("Erreur lors de la mise à jour des informations.");
+      }
+    };
 
     const handleImageChange = (event) => {
       const file = event.target.files[0];
       if (file) {
         selectedImage.value = file;
       }
+    };
+
+    const handleLogout = () => {
+      logout(); // Appeler la fonction logout
+      router.push("/"); // Rediriger vers la page de connexion
     };
 
     fetchUserInfo();
@@ -102,6 +110,7 @@ export default {
       saveChanges,
       fetchUserInfo,
       handleImageChange,
+      handleLogout,
     };
   },
 };
@@ -119,21 +128,32 @@ export default {
         ></textarea>
         <span v-else>{{ userInfo.username }}</span>
       </h2>
-      <button
-        v-if="isAuthenticatedUser"
-        class="action-button"
-        :class="{ edit: isEditing }"
-        @click="isEditing ? saveChanges() : (isEditing = true)"
-      >
-        {{ isEditing ? "Terminer" : "Modifier" }}
-      </button>
-      <button
-        v-else
-        class="action-button follow"
-        @click="toggleFollow"
-      >
-        {{ isFollowing ? "Break-up" : "Smatcher" }}
-      </button>
+      <div class="actions">
+        <div class="button-group">
+          <button
+            v-if="isAuthenticatedUser"
+            class="logout-button"
+            @click="handleLogout"
+          >
+            <span class="material-icons">logout</span>
+          </button>
+          <button
+            v-if="isAuthenticatedUser"
+            class="action-button"
+            :class="{ edit: isEditing }"
+            @click="isEditing ? saveChanges() : (isEditing = true)"
+          >
+            {{ isEditing ? "Terminer" : "Modifier" }}
+          </button>
+          <button
+            v-else
+            class="action-button follow"
+            @click="toggleFollow"
+          >
+            {{ isFollowing ? "Break-up" : "Smatcher" }}
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="profile">
@@ -197,6 +217,19 @@ export default {
   width: 100%;
 }
 
+/* Conteneur pour aligner les boutons */
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Groupe de boutons alignés */
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacement entre les boutons */
+}
+
 /* Boutons d'action */
 .action-button {
   font-size: 14px;
@@ -243,6 +276,31 @@ export default {
 .action-button.follow.breakup:hover {
   background-color: #e57373;
   box-shadow: 0px 6px 8px rgba(244, 67, 54, 0.4);
+}
+
+/* Bouton Déconnexion */
+.logout-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  margin-right: 10px;
+  border-radius: 50%;
+  background-color: #ffccd5; /* Rouge pâle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #ffadb8; /* Rouge un peu plus foncé */
+  box-shadow: 0px 4px 6px rgba(255, 108, 108, 0.3);
+}
+
+.logout-button span.material-icons {
+  color: #f44336; /* Rouge */
+  font-size: 20px;
 }
 
 /* Profile */
@@ -294,8 +352,8 @@ export default {
 /* Stats */
 .stats {
   display: flex;
-  gap: 20px;
-  margin-left: 20px;
+  gap: 30px;
+  margin-left: 80px;
 }
 
 .stats div {
@@ -326,3 +384,4 @@ export default {
   border-radius: 5px;
 }
 </style>
+
