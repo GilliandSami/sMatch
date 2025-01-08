@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/Smatch.png" width="400" alt="Logo Smatch - Projet HEIG-VD Frontend"></p>
+<p align="center"><img src="src/frontend/assets/Smatch.png" width="400" alt="Logo Smatch - Projet HEIG-VD Frontend"></p>
 
 # 🎯 **sMatch Frontend**
 
