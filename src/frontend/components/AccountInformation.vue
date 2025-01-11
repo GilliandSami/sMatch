@@ -243,40 +243,58 @@ export default {
 }
 
 /* Bouton "Modifier" */
-.action-button.edit {
+.action-button:not(edit) {
   background-color: #ff6c19;
   color: white;
   box-shadow: 0px 4px 6px rgba(255, 108, 25, 0.3);
 }
 
+.action-button:not(.edit):hover {
+  background-color: #e64a19;
+  box-shadow: 0px 6px 8px rgba(230, 74, 25, 0.4);
+}
+
+/* Bouton "Terminer" */
+.action-button.edit {
+  background-color: white;
+  color: #ff6c19;
+  border: 2px solid #ff6c19;
+  box-shadow: 0px 4px 6px rgba(255, 108, 25, 0.3);
+}
+
 .action-button.edit:hover {
-  background-color: #ff8145;
-  box-shadow: 0px 6px 8px rgba(255, 108, 25, 0.4);
+  background-color: white;
 }
 
 /* Bouton "Smatcher" */
 .action-button.follow {
-  background-color: #4caf50;
+  background-color: #D1B7FF;
   color: white;
-  box-shadow: 0px 4px 6px rgba(76, 175, 80, 0.3);
+  border: none;
+  box-shadow: 0px 4px 6px rgba(209, 183, 255, 0.3);
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .action-button.follow:hover {
-  background-color: #66bb6a;
-  box-shadow: 0px 6px 8px rgba(76, 175, 80, 0.4);
+  background-color: #bca4e3;
+  box-shadow: 0px 6px 8px rgba(209, 183, 255, 0.4);
 }
 
 /* Bouton "Break-up" */
 .action-button.follow.breakup {
-  background-color: #f44336;
-  color: white;
-  box-shadow: 0px 4px 6px rgba(244, 67, 54, 0.3);
+  background-color: white;
+  color: #D1B7FF;
+  border: 2px solid #D1B7FF;
+  box-shadow: 0px 4px 6px rgba(209, 183, 255, 0.3);
+  transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
 }
 
 .action-button.follow.breakup:hover {
-  background-color: #e57373;
-  box-shadow: 0px 6px 8px rgba(244, 67, 54, 0.4);
+  background-color: #f4f1fc;
+  color: #bca4e3;
+  box-shadow: 0px 6px 8px rgba(209, 183, 255, 0.4);
 }
+
 
 /* Bouton Déconnexion */
 .logout-button {
@@ -311,8 +329,8 @@ export default {
 
 .profile-picture {
   position: relative;
-  width: 70px;
-  height: 70px;
+  width: 90px;
+  height: 90px;
 }
 
 .profile-picture img {
@@ -353,7 +371,7 @@ export default {
 .stats {
   display: flex;
   gap: 30px;
-  margin-left: 80px;
+  margin-left: 30px;
 }
 
 .stats div {
@@ -362,10 +380,12 @@ export default {
 
 .stats h3 {
   color: #000;
+  margin-bottom: 3px;
 }
 
 .stats p {
   color: #666;
+  margin-top: 0;
 }
 
 /* Description */

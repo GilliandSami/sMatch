@@ -16,15 +16,16 @@ export default {
 };
 </script>
 
+
 <template>
   <div class="account-switcher">
     <!-- Onglet Posts -->
     <button :class="{ 'active': selectedTab === 'posts' }" @click="selectTab('posts')">
-      Posts
+      <span class="material-icons">grid_view</span> Posts
     </button>
     <!-- Onglet Likes -->
     <button :class="{ 'active': selectedTab === 'likes' }" @click="selectTab('likes')">
-      Likes
+      <span class="material-icons">favorite</span> Favoris
     </button>
     <!-- Barre indicatrice -->
     <div class="indicator" :class="selectedTab"></div>
@@ -57,12 +58,19 @@ export default {
   cursor: pointer;
   outline: none;
   position: relative;
+  display: flex; /* Permet d'aligner l'icône et le texte */
+  align-items: center; /* Centre verticalement */
+  justify-content: center; /* Centre horizontalement */
+  gap: 5px; /* Espace entre l'icône et le texte */
 }
 
 .account-switcher button.active {
   color: #ff6c19; /* Couleur violette */
 }
 
+.material-icons {
+  font-size: 20px; /* Taille des icônes */
+}
 .indicator {
   position: absolute;
   bottom: 0;

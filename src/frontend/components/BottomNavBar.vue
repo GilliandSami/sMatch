@@ -114,13 +114,17 @@ export default {
   justify-content: center;
   cursor: pointer;
   color: gray;
-  font-size: 24px;
+  font-size: 32px;
   outline: none;
+  transition: transform 0.2s ease;
+}
+
+.bottom-nav button:hover {
+  transform: scale(1.1); /* Zoom léger au survol */
 }
 
 .bottom-nav button.active {
-  color: #a020f0;
-  /* Couleur violette pour l'icône active */
+  color: #D1B7FF; /* Couleur violette pour l'icône active */
 }
 
 .bottom-nav button.profile {
@@ -128,15 +132,19 @@ export default {
 }
 
 .bottom-nav button.profile.active {
-  border: 2px solid #a020f0;
-  /* Bordure violette si active */
+  border: 2px solid #D1B7FF; /* Bordure violette si active */
   border-radius: 50%;
 }
 
+.material-icons {
+  font-size: 32px; /* Augmentation de la taille des icônes */
+}
+
 .profile-pic {
-  width: 30px;
-  height: 30px;
+  width: 40px; /* Taille de l'image de profil légèrement augmentée */
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
 }
+
 </style>

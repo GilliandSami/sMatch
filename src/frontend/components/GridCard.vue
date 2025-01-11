@@ -80,7 +80,7 @@ export default {
 
 <style scoped>
 .grid-card {
-  padding: 20px;
+  padding: 10px;
 }
 
 .grid-card h2 {

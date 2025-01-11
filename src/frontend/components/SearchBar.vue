@@ -33,7 +33,9 @@ export default {
   border-radius: 25px; /* Bords arrondis */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Légère ombre */
   z-index: 1000; /* Toujours visible au-dessus */
-  margin: 40px; /* Marges pour espacer des bords */
+  margin-top: 40px;
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 .search-bar span.material-icons {

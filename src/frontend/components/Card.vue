@@ -109,6 +109,7 @@ export default {
   height: 160px; /* Ajusté pour une forme plus carrée */
   background-color: #fff;
   border-radius: 15px;
+  border: 1.5px solid #D1B7FF;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -160,7 +161,7 @@ export default {
 }
 
 .follow-btn.following {
-  background-color: #a020f0;
+  background-color: #D1B7FF;
 }
 
 .follow-btn:hover {
