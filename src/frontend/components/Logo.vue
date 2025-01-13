@@ -7,7 +7,7 @@
   <div class="logo-container">
     <div class="logo">
       <img src="/assets/smatch_logo.png" alt="sMatch Logo" class="logo-image" />
-      <p>Connecte-toi pour smatcher !</p>
+      <p class="logo-text">Connecte-toi pour smatcher !</p>
     </div>
   </div>
 </template>
@@ -17,32 +17,40 @@
   display: flex;
   justify-content: center;
   position: absolute;
-  top: 0;
+  top: -45px; /* Remonte la forme orange */
   width: 100%;
 }
 
 .logo-container {
   background-color: #D1B7FF; /* Violet foncé */
   width: 100%;
-  height: 50vh; /* Moitié de la hauteur de l'écran */
+  height: 60vh; /* Augmente la hauteur du conteneur */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Positionne les éléments vers le haut */
   align-items: center;
+  padding-top: 120px; /* Ajoute un espace au-dessus du logo */
   margin: 0;
 }
 
 .logo {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column; /* Aligne les éléments verticalement */
+  align-items: center; /* Centre horizontalement */
+  margin-bottom: 0.2rem;
 }
 
 .logo-image {
-  width: 200px; /* Ajuste la taille selon tes besoins */
-  margin-bottom: 1rem;
+  width: 250px; /* Ajuste la taille selon tes besoins */
+  display: block; /* Assure une cohérence dans le flux */
+  margin-bottom: 0;
 }
 
-.logo p {
+.logo-text {
   font-size: 1rem;
   color: #ff8145;
+  text-align: center;
+  margin-bottom: 20px; 
+  margin-top: -70px; /* Ajoute un léger espace entre le logo et le texte */
 }
 </style>
