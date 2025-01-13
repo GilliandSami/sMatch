@@ -130,7 +130,7 @@ Ce projet est basé sur une REST API développée spécifiquement pour sMatch. P
 
 Les maquettes de l'application sMatch sont disponibles sur Figma. Consultez-les ici :
 
-[Maquettes sMatch](https://www.figma.com/design/Oayx8EktIW8gYPf4wOrxFO/Maquettes-DevMobil?node-id=0-1&t=Dk3U21j8vyABBBQh-1)
+[Maquettes sMatch](https://www.figma.com/design/Oayx8EktIW8gYPf4wOrxFO/Maquettes-DevMobil?node-id=0-1&t=IlBOZtxyVq8ApqSH-1)
 
 ---
 
