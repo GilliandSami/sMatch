@@ -10,6 +10,7 @@
 
 - [🎯 sMatch Frontend](#-smatch-frontend)
   - [🌍 Contexte](#-contexte)
+  - [👥 Équipe](#-équipe)
   - [✨ Fonctionnalités principales](#-fonctionnalités-principales)
   - [⚙️ Requis](#️-requis)
   - [🚀 Installation et lancement](#-installation-et-lancement)
@@ -18,7 +19,6 @@
   - [📂 Structure du projet](#-structure-du-projet)
   - [🔧 Configuration](#-configuration)
   - [🤝 Contributions](#-contributions)
-  - [📜 Licence](#-licence)
 
 ---
 
@@ -30,6 +30,21 @@ Le frontend de **sMatch** est conçu pour offrir une expérience utilisateur flu
 - Suivre ou ne plus suivre des utilisateurs.
 - Gérer des groupes collaboratifs.
 - Recevoir des notifications en temps réel grâce aux WebSockets.
+
+---
+
+## 👥 **Équipe**
+
+Ce projet a été réalisé avec la contribution des membres suivants :
+
+- **Morgane Devals**  
+  [GitHub](https://github.com/morgui2003) | [LinkedIn](https://www.linkedin.com/in/morgane-devals-5730ba26a/)
+
+- **Sami Gilliand**  
+  [GitHub](https://github.com/GilliandSami) | [LinkedIn](https://www.linkedin.com/in/sami-gilliand/)
+
+- **Léa Macaluso**  
+  [GitHub](https://github.com/macalusolea) | [LinkedIn](https://www.linkedin.com/in/lea-macaluso/)
 
 ---
 
