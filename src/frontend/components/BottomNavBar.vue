@@ -82,10 +82,7 @@ export default {
       <span class="material-icons">star</span>
     </button>
     <!-- Icône Account -->
-    <button
-      :class="{ profile: true, active: selected === 'account' }"
-      @click="selectNavItem('account')"
-    >
+    <button :class="{ profile: true, active: selected === 'account' }" @click="selectNavItem('account')">
       <img :src="userProfilePicture" alt="Profile" class="profile-pic" />
     </button>
   </div>
@@ -120,11 +117,13 @@ export default {
 }
 
 .bottom-nav button:hover {
-  transform: scale(1.1); /* Zoom léger au survol */
+  transform: scale(1.1);
+  /* Zoom léger au survol */
 }
 
 .bottom-nav button.active {
-  color: #D1B7FF; /* Couleur violette pour l'icône active */
+  color: #D1B7FF;
+  /* Couleur violette pour l'icône active */
 }
 
 .bottom-nav button.profile {
@@ -132,19 +131,21 @@ export default {
 }
 
 .bottom-nav button.profile.active {
-  border: 2px solid #D1B7FF; /* Bordure violette si active */
+  border: 2px solid #D1B7FF;
+  /* Bordure violette si active */
   border-radius: 50%;
 }
 
 .material-icons {
-  font-size: 32px; /* Augmentation de la taille des icônes */
+  font-size: 32px;
+  /* Augmentation de la taille des icônes */
 }
 
 .profile-pic {
-  width: 40px; /* Taille de l'image de profil légèrement augmentée */
+  width: 40px;
+  /* Taille de l'image de profil légèrement augmentée */
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
 }
-
 </style>

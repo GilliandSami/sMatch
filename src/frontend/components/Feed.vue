@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, watch } from "vue";
 import Post from "./Post.vue";
 import { useFetchApiCrud } from "../utils/FetchCrud";
+import WSClient from "../../websocket/WSClient.js"; // Importer le WebSocket Client
 
 export default {
   name: "Feed",
@@ -21,6 +22,9 @@ export default {
     const userData = ref(null); // Données utilisateur pour "mes-smatchs"
     const userCache = ref(new Map()); // Cache des détails utilisateur
     const isFollowingEmpty = ref(false); // Indicateur si l'utilisateur suit quelqu'un
+
+    const wsClient = new WSClient("ws://localhost:8887"); // Initialiser le WebSocket client
+    const channelName = "smatch-thread"; // Nom du canal pour PubSub
 
     const loadPosts = async () => {
       const token = localStorage.getItem("jwt");
@@ -82,7 +86,18 @@ export default {
       return userCache.value.get(userId);
     };
 
-    onMounted(loadPosts);
+    onMounted(async () => {
+      await wsClient.connect(); // Connexion au WebSocket
+
+      // Souscrire au canal WebSocket
+      wsClient.sub(channelName, (newPost) => {
+        // Ajouter le post reçu en haut de la liste
+        trompeTesSmatchsPosts.value.unshift(newPost);
+      });
+
+      // Charger les posts initiaux
+      await loadPosts();
+    });
 
     // Regarder les changements de la prop feedType et recharger les posts
     watch(

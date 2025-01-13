@@ -1,7 +1,7 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useFetchApiCrud } from "../utils/FetchCrud";
-// Importer la bibliothèque d'emojis
+import WSClient from "../../websocket/WSClient.js"; // Importer WSClient
 import "emoji-picker-element";
 
 export default {
@@ -13,8 +13,14 @@ export default {
     const showEmojiPicker = ref(false);
 
     const { read, create } = useFetchApiCrud("/api/users");
+    const wsClient = new WSClient("ws://localhost:8887"); // Initialiser WSClient
+    const channelName = "smatch-thread";
 
-    // Récupérer les données utilisateur
+    onMounted(async () => {
+      await wsClient.connect(); // Connecter le WebSocket
+      fetchUserData();
+    });
+
     const fetchUserData = async () => {
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       const userId = userInfo?.id;
@@ -38,10 +44,6 @@ export default {
       }
     };
 
-    // Charger les données utilisateur au montage
-    onMounted(fetchUserData);
-
-    // Fonction pour soumettre un post
     const submitPost = async () => {
       if (!postContent.value.trim() && !selectedImage.value) {
         alert("Veuillez écrire un message ou sélectionner une image avant de poster !");
@@ -52,16 +54,17 @@ export default {
       const { create } = useFetchApiCrud("/api/posts");
 
       try {
+        let newPost;
         if (selectedImage.value) {
           const formData = new FormData();
           formData.append("content", postContent.value.trim());
           formData.append("media_uri", selectedImage.value);
 
-          await create(formData, {
+          newPost = await create(formData, {
             Authorization: `Bearer ${token}`,
           });
         } else {
-          await create(
+          newPost = await create(
             {
               content: postContent.value.trim(),
             },
@@ -70,6 +73,9 @@ export default {
             }
           );
         }
+
+        // Publier le post via WebSocket
+        wsClient.pub(channelName, newPost);
 
         alert("Votre post a été publié !");
         postContent.value = "";

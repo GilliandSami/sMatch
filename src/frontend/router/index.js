@@ -3,6 +3,7 @@ import AuthPage from "../pages/AuthPage.vue";
 import HomePage from "../pages/HomePage.vue";
 import SearchPage from "../pages/SearchPage.vue";
 import AccountPage from "../pages/AccountPage.vue";
+import GroupPage from "../pages/GroupPage.vue";
 
 const routes = [
     {
@@ -25,6 +26,11 @@ const routes = [
         component: AccountPage,
         meta: { requiresAuth: true },
     },
+    {
+        path: "/groups",
+        component: GroupPage,
+        meta: { requiresAuth: true },
+    }
 ];
 
 const router = createRouter({

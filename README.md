@@ -107,8 +107,29 @@ Créez un fichier `.env` à la racine avec les variables suivantes :
 VITE_API_BASE_URL=http://localhost:3000/api
 VITE_WEBSOCKET_URL=ws://localhost:3000
 ```
+### **Démarrer l'API localement**
+
+Accessible au lien suivant : [sMatch REST API](https://github.com/GilliandSami/sMatch-RestAPI/tree/main)
+
+Vous devrez cloner la RestAPI sur votre machine, puis la lancer
+à travers la commande suivante :
+
+```bash
+npm run dev
+```
+
+### **Lancer le serveur WebSocket **
+
+Disponible dans le repository de **sMatch**, vous devrez lancer dans un autre terminal le serveur WebSocket à travers la commande suivante :
+
+```bash
+npm run server
+```
 
 ### **Lancer le serveur de développement**
+
+Finalement, dans un autre terminal, vous pourrez lancer le serveur
+de développement du frontend, fonctionnel, avec la RestAPI lancée en arrière-plan, ainsi que le serveur WebSocket :
 
 ```bash
 npm run dev
