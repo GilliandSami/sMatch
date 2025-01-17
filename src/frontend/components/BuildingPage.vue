@@ -32,7 +32,7 @@ export default {
 .construction-text {
     font-size: 20px;
     /* Taille du texte */
-    font-weight: bolder;
+    font-weight: normal;
     color: #555;
     /* Couleur du texte */
     text-align: center;

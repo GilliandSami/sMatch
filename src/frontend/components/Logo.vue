@@ -17,7 +17,7 @@
   display: flex;
   justify-content: center;
   position: absolute;
-  top: 0;
+  top: -15%;
   width: 100%;
 }
 
@@ -29,16 +29,16 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0;
+  margin-top : -30%;/* Moitié de la hauteur de l'écran */
 }
 
 .logo {
-  margin-bottom: 1.5rem;
+  margin-top: 5rem;
 }
 
 .logo-image {
   width: 200px; /* Ajuste la taille selon tes besoins */
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .logo p {
