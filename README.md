@@ -15,6 +15,7 @@
   - [⚙️ Requis](#️-requis)
   - [🚀 Installation et lancement](#-installation-et-lancement)
   - [📖 Backend sMatch](#-backend-smatch)
+  - [📺 Vidéo de présentation](#-video-de-preséntation)
   - [🎨 Maquettes Figma](#-maquettes-figma)
   - [📂 Structure du projet](#-structure-du-projet)
   - [🔧 Configuration](#-configuration)
@@ -144,6 +145,14 @@ L'application sera accessible à l'adresse : [http://localhost:5173](http://loca
 Ce projet est basé sur une REST API développée spécifiquement pour sMatch. Pour en savoir plus sur le backend ou installer l'API localement, visitez le repository suivant :
 
 [sMatch REST API](https://github.com/GilliandSami/sMatch-RestAPI/tree/main)
+
+---
+
+## 📺 **Vidéo de présentation**
+
+Une vidéo, présentant le projet et ses fonctionnalités, a été réalisée pour donner plus de contexte d'utilisation à l'application sMatch.  
+Vous pouvez la consulter en cliquant sur le lien suivant :  
+👉 [sMatch - Vidéo de présentation](https://www.youtube.com/watch?v=wrbz_ZC3LUY)
 
 ---
 
